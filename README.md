@@ -114,7 +114,7 @@ If `pytest` cannot import `src`, run from the repo root (a small `conftest.py` a
 
 ## Terminal output (for screenshots)
 
-Terminal captures live in `screenshots/` and are embedded below (titles, scores, and reasons visible in each). The live CLI may show a **`tabulate`** grid; older screenshots can still satisfy the rubric if titles, scores, and reasons are readable.
+Terminal captures live in `screenshots/` and are embedded below. Each shows the current **`tabulate`** output (titles, scores, and reasons in the table).
 
 | Profile | File |
 | --- | --- |
