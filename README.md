@@ -107,29 +107,25 @@ If `pytest` cannot import `src`, run from the repo root (a small `conftest.py` a
 
 ## Terminal output (for screenshots)
 
-Save terminal screenshots as PNG files under `screenshots/` using the names below so the Markdown image links work on GitHub.
+Terminal captures live in `screenshots/` and are embedded below (titles, scores, and reasons visible in each).
 
-| Profile | Filename |
+| Profile | File |
 | --- | --- |
-| High-Energy Pop | `screenshots/profile-a-high-energy-pop.png` |
-| Chill Lofi | `screenshots/profile-b-chill-lofi.png` |
-| Deep Intense Rock | `screenshots/profile-c-intense-rock.png` |
-| Adversarial high energy + sad mood | `screenshots/profile-d-adversarial-sad.png` |
-| Adversarial metal + relaxed | `screenshots/profile-e-adversarial-metal-relaxed.png` |
+| High-Energy Pop | `screenshots/a.png` |
+| Chill Lofi | `screenshots/b.png` |
+| Deep Intense Rock | `screenshots/c.png` |
+| Adversarial high energy + sad mood | `screenshots/d.png` |
+| Adversarial metal + relaxed | `screenshots/e.png` |
 
-**Included in the repo right now:** Profile A and Profile B.
+![Profile A — High-Energy Pop](screenshots/a.png)
 
-![High-energy pop recommendations (titles, scores, reasons)](screenshots/profile-a-high-energy-pop.png)
+![Profile B — Chill Lofi](screenshots/b.png)
 
-![Chill lofi recommendations (titles, scores, reasons)](screenshots/profile-b-chill-lofi.png)
+![Profile C — Deep Intense Rock](screenshots/c.png)
 
-To add the rest, capture those terminal sections and save them with the `profile-c` … `profile-e` filenames above, then paste the same image pattern here:
+![Profile D — Adversarial high energy + sad mood](screenshots/d.png)
 
-```markdown
-![Deep intense rock recommendations](screenshots/profile-c-intense-rock.png)
-![Adversarial high energy + sad mood](screenshots/profile-d-adversarial-sad.png)
-![Adversarial metal + relaxed](screenshots/profile-e-adversarial-metal-relaxed.png)
-```
+![Profile E — Adversarial metal + relaxed](screenshots/e.png)
 
 ### Captured CLI excerpt (Profile A)
 
