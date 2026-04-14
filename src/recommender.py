@@ -11,6 +11,20 @@ WEIGHT_MOOD = 1.0
 WEIGHT_ENERGY_SIM = 2.0 if _EXPERIMENT else 1.0
 WEIGHT_ACOUSTIC_SIM = 0.5
 
+_RANKING_MODES = frozenset({"genre_first", "mood_first"})
+
+
+def score_weights(ranking_mode: str) -> Tuple[float, float, float, float]:
+    """Return (genre_w, mood_w, energy_sim_w, acoustic_sim_w) for a named ranking strategy."""
+    if ranking_mode not in _RANKING_MODES:
+        raise ValueError(
+            f"Unknown ranking_mode {ranking_mode!r}; use one of {sorted(_RANKING_MODES)}"
+        )
+    g, m, e, a = WEIGHT_GENRE, WEIGHT_MOOD, WEIGHT_ENERGY_SIM, WEIGHT_ACOUSTIC_SIM
+    if ranking_mode == "mood_first":
+        return (g * 0.75, m * 2.0, e, a)
+    return (g, m, e, a)
+
 
 @dataclass
 class Song:
@@ -74,15 +88,18 @@ class Recommender:
     Required by tests/test_recommender.py
     """
 
-    def __init__(self, songs: List[Song]):
+    def __init__(self, songs: List[Song], ranking_mode: str = "genre_first"):
         self.songs = songs
+        self._ranking_mode = ranking_mode
 
     def recommend(self, user: UserProfile, k: int = 5) -> List[Song]:
         """Return up to k songs ranked highest for this user."""
         prefs = _user_profile_to_prefs(user)
         scored: List[Tuple[float, Song]] = []
         for song in self.songs:
-            total, _reasons = score_song(prefs, _song_to_dict(song))
+            total, _reasons = score_song(
+                prefs, _song_to_dict(song), ranking_mode=self._ranking_mode
+            )
             scored.append((total, song))
         scored.sort(key=lambda x: x[0], reverse=True)
         return [song for _score, song in scored[:k]]
@@ -90,7 +107,9 @@ class Recommender:
     def explain_recommendation(self, user: UserProfile, song: Song) -> str:
         """Return the same reason strings score_song uses for this song."""
         prefs = _user_profile_to_prefs(user)
-        _total, reasons = score_song(prefs, _song_to_dict(song))
+        _total, reasons = score_song(
+            prefs, _song_to_dict(song), ranking_mode=self._ranking_mode
+        )
         return "; ".join(reasons)
 
 
@@ -111,8 +130,13 @@ def load_songs(csv_path: str) -> List[Dict]:
     return songs
 
 
-def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, List[str]]:
+def score_song(
+    user_prefs: Dict,
+    song: Dict,
+    ranking_mode: str = "genre_first",
+) -> Tuple[float, List[str]]:
     """Return total score and human-readable reason strings for one song."""
+    wg, wm, we, wa = score_weights(ranking_mode)
     score = 0.0
     reasons: List[str] = []
 
@@ -125,23 +149,23 @@ def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, List[str]]:
     song_mood = str(song.get("mood", "")).lower().strip()
 
     if genre_pref and song_genre == genre_pref:
-        score += WEIGHT_GENRE
-        reasons.append(f"genre match (+{WEIGHT_GENRE})")
+        score += wg
+        reasons.append(f"genre match (+{wg})")
 
     if mood_pref and song_mood == mood_pref:
-        score += WEIGHT_MOOD
-        reasons.append(f"mood match (+{WEIGHT_MOOD})")
+        score += wm
+        reasons.append(f"mood match (+{wm})")
 
     song_energy = float(song["energy"])
     energy_gap = abs(song_energy - target_energy)
-    energy_points = WEIGHT_ENERGY_SIM * (1.0 - energy_gap)
+    energy_points = we * (1.0 - energy_gap)
     score += energy_points
     reasons.append(f"energy closeness (+{energy_points:.2f}; gap={energy_gap:.2f})")
 
     acoustic = float(song["acousticness"])
     acoustic_target = 0.85 if likes_acoustic else 0.2
     acoustic_gap = abs(acoustic - acoustic_target)
-    acoustic_points = WEIGHT_ACOUSTIC_SIM * (1.0 - acoustic_gap)
+    acoustic_points = wa * (1.0 - acoustic_gap)
     score += acoustic_points
     reasons.append(f"acoustic fit (+{acoustic_points:.2f}; target={acoustic_target:.2f})")
 
@@ -149,12 +173,15 @@ def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, List[str]]:
 
 
 def recommend_songs(
-    user_prefs: Dict, songs: List[Dict], k: int = 5
+    user_prefs: Dict,
+    songs: List[Dict],
+    k: int = 5,
+    ranking_mode: str = "genre_first",
 ) -> List[Tuple[Dict, float, str]]:
     """Score every song, sort by score descending, return the top k results."""
     ranked: List[Tuple[Dict, float, str]] = []
     for song in songs:
-        total, reasons = score_song(user_prefs, song)
+        total, reasons = score_song(user_prefs, song, ranking_mode=ranking_mode)
         explanation = "; ".join(reasons)
         ranked.append((song, total, explanation))
     ranked.sort(key=lambda x: x[1], reverse=True)

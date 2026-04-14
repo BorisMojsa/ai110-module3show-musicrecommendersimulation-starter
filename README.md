@@ -93,7 +93,14 @@ This profile is wide enough to separate **intense rock** from **chill lofi** (di
    python -m src.main
    ```
 
-   You should see `Loaded songs: 18` followed by several labeled profile blocks.
+   Optional **ranking mode** (stretch: compare strategies):
+
+   ```bash
+   python -m src.main --mode genre_first   # default
+   python -m src.main --mode mood_first    # boosts mood match vs genre match
+   ```
+
+   You should see `Loaded songs: 18` followed by several labeled profile blocks. Recommendations print as a **`tabulate`** table (rank, title, artist, genre, mood, score, reasons).
 
 ### Running Tests
 
@@ -107,7 +114,7 @@ If `pytest` cannot import `src`, run from the repo root (a small `conftest.py` a
 
 ## Terminal output (for screenshots)
 
-Terminal captures live in `screenshots/` and are embedded below (titles, scores, and reasons visible in each).
+Terminal captures live in `screenshots/` and are embedded below (titles, scores, and reasons visible in each). The live CLI may show a **`tabulate`** grid; older screenshots can still satisfy the rubric if titles, scores, and reasons are readable.
 
 | Profile | File |
 | --- | --- |
@@ -143,6 +150,10 @@ Loaded songs: 18
 ## Experiments You Tried
 
 **Weight shift (assigned experiment):** export `RECOMMENDER_EXPERIMENT=1` before running Python. Genre match drops from `+2.0` to `+1.0`, and the energy similarity multiplier doubles (`1.0 → 2.0`). On the high-energy pop profile, *Sunrise City* stayed first, but runners-up tightened around energy—showing the knob changes *ordering* among partial matches more than it invents new understanding.
+
+**Stretch — two ranking modes:** run the same profiles with `--mode genre_first` vs `--mode mood_first` and compare the printed tables; mood-first raises the value of mood matches in the score breakdown (see `score_weights` in `src/recommender.py`).
+
+**Stretch — tabulate output:** results are rendered with the `tabulate` package so each row includes wrapped **Reasons** next to the score (see `src/main.py`).
 
 **What was not automated here:** temporarily commenting out the mood check (a second valid experiment). Doing so would lift mood-agnostic ties; if you try it locally, diff the printed top 5 against baseline.
 

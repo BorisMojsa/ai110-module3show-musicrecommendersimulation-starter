@@ -32,7 +32,7 @@ The scoring is easy to read: each recommendation lists the exact reasons that fi
 
 ## 6. Limitations and Bias  
 
-Because **genre match is worth more than mood match**, a user who only matches genre can still see very “wrong mood” songs high on the list if energy and acoustic terms align—especially when the dataset has no rows for an requested mood like `sad`. **Gym Hero** can stay near the top for high-energy pop-ish queries even when a listener wanted lyrical sadness, because the CSV cannot represent emotions the model never sees. The catalog is small, so **any single row** (for example the only metal track) can dominate a niche profile regardless of diversity. These effects are classic **filter bubble** risks: the system can only recommend what exists, and weights decide which corners of the catalog get exaggerated.
+Because **genre match is worth more than mood match**, a user who only matches genre can still see very “wrong mood” songs high on the list if energy and acoustic terms align—especially when the dataset has no rows for **a** requested mood like `sad`. **Gym Hero** can stay near the top for high-energy pop-ish queries even when a listener wanted lyrical sadness, because the CSV cannot represent emotions the model never sees. The catalog is small, so **any single row** (for example the only metal track) can dominate a niche profile regardless of diversity. These effects are classic **filter bubble** risks: the system can only recommend what exists, and weights decide which corners of the catalog get exaggerated.
 
 ---
 
@@ -51,3 +51,11 @@ Add **collaborative** signals (synthetic play counts) or a second mode that bala
 ## 9. Personal Reflection  
 
 The biggest learning moment was seeing how a handful of weighted rules already produces convincing “because” explanations—**ranking** is really just repeated **scoring** plus sorting. AI tools sped up boilerplate (CSV typing, sorting patterns), but I still had to sanity-check weights against edge profiles so the story stayed honest. What surprised me is how quickly **missing labels** (like no `sad` mood) turn into silent bias: the math keeps working, but the user’s intent is not in the file. If I extended the project, I would log per-feature contributions across the whole top k to catch when one feature silently steers everything.
+
+---
+
+## 10. Stretch features (bonus rubric)
+
+**Multiple ranking modes.** The CLI supports `--mode genre_first` (default: genre and mood weights match the main recipe) and `--mode mood_first`, which lowers the genre-match weight slightly and doubles the mood-match weight before the same energy and acoustic terms run. That is a small **strategy-style** switch: `score_weights(ranking_mode)` in `src/recommender.py` centralizes the numbers so `score_song` and `recommend_songs` stay in sync. You pick the mode in `main.py` via the flag; the `Recommender` class also accepts `ranking_mode` for tests. **Mood-first** can reorder near-ties when a listener cares more about vibe labels than strict genre boxes.
+
+**Tabulate summary table.** `src/main.py` prints each profile’s top picks as a **GitHub-flavored Markdown table** using the `tabulate` library, with columns for title, artist, genre, mood, score, and wrapped **Reasons** so the scoring logic is visible at a glance. That improves transparency compared to a loose bullet list, especially when reasons are long.
