@@ -38,7 +38,7 @@ Because **genre match is worth more than mood match**, a user who only matches g
 
 ## 7. Evaluation  
 
-Profiles tested in the CLI bundle include **High-Energy Pop**, **Chill Lofi**, **Deep Intense Rock**, and two **adversarial** mixes (very high energy with a mood that barely exists in the data, and metal with relaxed mood plus acoustic taste). I compared rankings to my own intuition and watched how ties broke through energy and acoustic gaps. I also ran a **weight experiment**: with `RECOMMENDER_EXPERIMENT=1`, genre weight halves and energy similarity doubles; top pop picks stayed similar but ordering tightened around energy, showing the system is **sensitive** to those knobs. Pairwise commentary lives in `reflection.md`.
+Profiles tested in the CLI bundle include **High-Energy Pop**, **Chill Lofi**, **Deep Intense Rock**, and two **adversarial** mixes (very high energy with a mood that barely exists in the data, and metal with relaxed mood plus acoustic taste). I compared rankings to my own intuition and watched how ties broke through energy and acoustic gaps. I also ran a **weight experiment**: with `RECOMMENDER_EXPERIMENT=1`, genre weight halves and energy similarity doubles; top pop picks stayed similar but ordering tightened around energy, showing the system is **sensitive** to those knobs. For stretch, I compared **`--mode genre_first`** vs **`--mode mood_first`** on the same profiles (tables in the terminal): mood-first bumps *Rooftop Lights* above *Gym Hero* for the high-energy pop profile because it rewards the happy mood match more strongly than the pure-pop genre gate. Pairwise commentary lives in `reflection.md`.
 
 ---
 
