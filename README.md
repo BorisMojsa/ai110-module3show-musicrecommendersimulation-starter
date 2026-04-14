@@ -105,9 +105,9 @@ If `pytest` cannot import `src`, run from the repo root (a small `conftest.py` a
 
 ## Terminal output (for screenshots)
 
-Course instructions ask for **screenshots** of the terminal for each profile. Drop PNG files into `screenshots/` with the names below, then the images will render in GitHub.
+Save terminal screenshots as PNG files under `screenshots/` using the names below so the Markdown image links work on GitHub.
 
-| Profile | Suggested filename |
+| Profile | Filename |
 | --- | --- |
 | High-Energy Pop | `screenshots/profile-a-high-energy-pop.png` |
 | Chill Lofi | `screenshots/profile-b-chill-lofi.png` |
@@ -115,15 +115,19 @@ Course instructions ask for **screenshots** of the terminal for each profile. Dr
 | Adversarial high energy + sad mood | `screenshots/profile-d-adversarial-sad.png` |
 | Adversarial metal + relaxed | `screenshots/profile-e-adversarial-metal-relaxed.png` |
 
-![Profile A — High-Energy Pop](screenshots/profile-a-high-energy-pop.png)
+**Included in the repo right now:** Profile A and Profile B.
 
-![Profile B — Chill Lofi](screenshots/profile-b-chill-lofi.png)
+![High-energy pop recommendations (titles, scores, reasons)](screenshots/profile-a-high-energy-pop.png)
 
-![Profile C — Deep Intense Rock](screenshots/profile-c-intense-rock.png)
+![Chill lofi recommendations (titles, scores, reasons)](screenshots/profile-b-chill-lofi.png)
 
-![Profile D — Adversarial](screenshots/profile-d-adversarial-sad.png)
+To add the rest, capture those terminal sections and save them with the `profile-c` … `profile-e` filenames above, then paste the same image pattern here:
 
-![Profile E — Adversarial](screenshots/profile-e-adversarial-metal-relaxed.png)
+```markdown
+![Deep intense rock recommendations](screenshots/profile-c-intense-rock.png)
+![Adversarial high energy + sad mood](screenshots/profile-d-adversarial-sad.png)
+![Adversarial metal + relaxed](screenshots/profile-e-adversarial-metal-relaxed.png)
+```
 
 ### Captured CLI excerpt (Profile A)
 
