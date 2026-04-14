@@ -41,14 +41,16 @@ Discrete matches (weights tunable via `RECOMMENDER_EXPERIMENT`—see Experiments
 
 ```mermaid
 flowchart LR
-  CSV[data/songs.csv] --> LOAD[load_songs: typed dict rows]
-  PREFS[User prefs dict] --> SCORE[score_song per row]
+  CSV["data/songs.csv"] --> LOAD["load_songs"]
+  PREFS["User prefs"] --> SCORE["score_song each row"]
   LOAD --> SCORE
-  SCORE --> LIST[List of tuples\n(song, score, reasons)]
-  LIST --> SORT[Sort by score desc]
-  SORT --> TOP[Take top k]
-  TOP --> CLI[Terminal output]
+  SCORE --> LIST["Each row: score plus reasons"]
+  LIST --> SORT["Sort by score high to low"]
+  SORT --> TOP["Take top k"]
+  TOP --> CLI["Terminal output"]
 ```
+
+If the diagram does not render in your Markdown preview, use [Mermaid Live Editor](https://mermaid.live) to validate, or view this file on GitHub (README Mermaid is supported there).
 
 ---
 
