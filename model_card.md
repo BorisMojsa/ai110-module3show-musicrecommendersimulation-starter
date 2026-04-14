@@ -2,110 +2,52 @@
 
 ## 1. Model Name  
 
-Give your model a short, descriptive name.  
-Example: **VibeFinder 1.0**  
+**VibeRank CLI 1.0** — a tiny, transparent content-based recommender for a classroom catalog.
 
 ---
 
 ## 2. Intended Use  
 
-Describe what your recommender is designed to do and who it is for. 
-
-Prompts:  
-
-- What kind of recommendations does it generate  
-- What assumptions does it make about the user  
-- Is this for real users or classroom exploration  
+This system suggests up to five songs from a fixed CSV based on a dictionary of preferences (favorite genre, mood, target energy, and whether the listener likes acoustic textures). It is for learning and demonstration only. It is not for real users, not personalized from streaming history, and not a measure of song quality.
 
 ---
 
 ## 3. How the Model Works  
 
-Explain your scoring approach in simple language.  
-
-Prompts:  
-
-- What features of each song are used (genre, energy, mood, etc.)  
-- What user preferences are considered  
-- How does the model turn those into a score  
-- What changes did you make from the starter logic  
-
-Avoid code here. Pretend you are explaining the idea to a friend who does not program.
+The recommender is **content-based**: each song is judged only from its own attributes in the file, not from what other listeners clicked. It adds points when the user’s genre and mood strings exactly match the song’s genre and mood (case-insensitive). It adds extra points when the song’s **energy** is numerically close to the user’s target energy, using “closer is better” rather than “higher is always better.” A smaller **acoustic fit** term nudges songs toward high acousticness when `likes_acoustic` is true, and toward lower acousticness when it is false. Every song gets a numeric score; the **ranking rule** is simply “sort scores from high to low and take the top k.”
 
 ---
 
 ## 4. Data  
 
-Describe the dataset the model uses.  
-
-Prompts:  
-
-- How many songs are in the catalog  
-- What genres or moods are represented  
-- Did you add or remove data  
-- Are there parts of musical taste missing in the dataset  
+The catalog is **18 songs** in `data/songs.csv` (starter 10 plus eight added rows). Features include `genre`, `mood`, `energy` (0–1), `tempo_bpm`, `valence`, `danceability`, and `acousticness`. Genres include pop, lofi, rock, ambient, jazz, synthwave, indie pop, hip hop, classical, metal, country, folk, electronic, blues, and reggae. Moods include happy, chill, intense, relaxed, focused, moody, confident, reflective, aggressive, nostalgic, melancholic, euphoric, and soulful. The set is still tiny and creator-chosen, so it cannot represent global music culture.
 
 ---
 
 ## 5. Strengths  
 
-Where does your system seem to work well  
-
-Prompts:  
-
-- User types for which it gives reasonable results  
-- Any patterns you think your scoring captures correctly  
-- Cases where the recommendations matched your intuition  
+The scoring is easy to read: each recommendation lists the exact reasons that fired. It separates **intense rock** from **chill lofi** cleanly when genre and mood both match, because those matches add the largest discrete chunks of points. For a default **pop / happy / high energy** profile, bright pop tracks with matching mood rank first, which matches everyday intuition about “same vibe.”
 
 ---
 
-## 6. Limitations and Bias 
+## 6. Limitations and Bias  
 
-Where the system struggles or behaves unfairly. 
-
-Prompts:  
-
-- Features it does not consider  
-- Genres or moods that are underrepresented  
-- Cases where the system overfits to one preference  
-- Ways the scoring might unintentionally favor some users  
+Because **genre match is worth more than mood match**, a user who only matches genre can still see very “wrong mood” songs high on the list if energy and acoustic terms align—especially when the dataset has no rows for an requested mood like `sad`. **Gym Hero** can stay near the top for high-energy pop-ish queries even when a listener wanted lyrical sadness, because the CSV cannot represent emotions the model never sees. The catalog is small, so **any single row** (for example the only metal track) can dominate a niche profile regardless of diversity. These effects are classic **filter bubble** risks: the system can only recommend what exists, and weights decide which corners of the catalog get exaggerated.
 
 ---
 
 ## 7. Evaluation  
 
-How you checked whether the recommender behaved as expected. 
-
-Prompts:  
-
-- Which user profiles you tested  
-- What you looked for in the recommendations  
-- What surprised you  
-- Any simple tests or comparisons you ran  
-
-No need for numeric metrics unless you created some.
+Profiles tested in the CLI bundle include **High-Energy Pop**, **Chill Lofi**, **Deep Intense Rock**, and two **adversarial** mixes (very high energy with a mood that barely exists in the data, and metal with relaxed mood plus acoustic taste). I compared rankings to my own intuition and watched how ties broke through energy and acoustic gaps. I also ran a **weight experiment**: with `RECOMMENDER_EXPERIMENT=1`, genre weight halves and energy similarity doubles; top pop picks stayed similar but ordering tightened around energy, showing the system is **sensitive** to those knobs. Pairwise commentary lives in `reflection.md`.
 
 ---
 
 ## 8. Future Work  
 
-Ideas for how you would improve the model next.  
-
-Prompts:  
-
-- Additional features or preferences  
-- Better ways to explain recommendations  
-- Improving diversity among the top results  
-- Handling more complex user tastes  
+Add **collaborative** signals (synthetic play counts) or a second mode that balances **diversity** (penalize repeated artists in the top k). Incorporate **tempo bands** or **valence** with the same “distance to target” rule. Build a tiny **evaluation harness** that asserts expected top-1 rows for frozen CSV snapshots.
 
 ---
 
 ## 9. Personal Reflection  
 
-A few sentences about your experience.  
-
-Prompts:  
-
-- What you learned about recommender systems  
-- Something unexpected or interesting you discovered  
-- How this changed the way you think about music recommendation apps  
+The biggest learning moment was seeing how a handful of weighted rules already produces convincing “because” explanations—**ranking** is really just repeated **scoring** plus sorting. AI tools sped up boilerplate (CSV typing, sorting patterns), but I still had to sanity-check weights against edge profiles so the story stayed honest. What surprised me is how quickly **missing labels** (like no `sad` mood) turn into silent bias: the math keeps working, but the user’s intent is not in the file. If I extended the project, I would log per-feature contributions across the whole top k to catch when one feature silently steers everything.
